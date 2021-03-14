@@ -112,6 +112,8 @@ void adicionarPrimeiroNode(Lista lista, char info[TAM_NOME]){
 
   node->antescessor = NULL;
   node->proximo = NULL;
+
+  printf("O nome foi inserido com sucesso\n\n");
 }
 
 /* Funcao adicionarNomeInicio (Adiciona Nome No Inicio)
@@ -139,6 +141,8 @@ void adicionarNomeInicio(Lista lista, char info[TAM_NOME]){
   ponteiroNode aux = node; //guardando o endereco do node atual
   node = node->proximo; //o node passa a ser o proximo do node criado (antigo iniciaLista)
   node->antescessor = aux; //o node prox recebe o endereco do node criado
+
+  printf("O nome foi inserido com sucesso\n\n");
 }
 
 
@@ -167,6 +171,8 @@ void adicionarNomeFinal(Lista lista, char info[TAM_NOME]){
   ponteiroNode aux = node; //guardando o endereco do node atual
   node = node->antescessor; //o node passa a ser o antescessor do node criado (antigo fimLista)
   node->proximo = aux; //o node antescessor recebe o endereco do node criado
+
+  printf("O nome foi inserido com sucesso\n\n");
 }
 
 
@@ -196,8 +202,28 @@ void adicionarNomeEmOrdem(Lista lista, char info[TAM_NOME]){
 
   node->antescessor->proximo = node;
   node->proximo->antescessor = node;
+
+  printf("O nome foi inserido com sucesso\n\n");
 }
 
+
+/* Funcao verificarSeHaNomeLista (Verificar se ha o Nome Informado na Lista )
+ * 
+ * Retorna int para simular um boolean (0 - false e 1 - true)
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao verificar a existencia do nome informado na lista
+**/
+int verificarSeHaNomeLista(Lista lista, char nome[TAM_NOME]){
+  if(lista->iniLista != NULL){
+    ponteiroNode aux;
+    for( aux = lista->iniLista; aux != NULL; aux = aux->proximo){
+      if ( comparaString( aux->nome , nome ) == 0 ) return 1;
+    }
+  }
+  return 0;
+}
 
 /* Funcao deletaInicio (Deletar Inicio)
  * 
@@ -215,6 +241,8 @@ void deletarInicio(Lista lista, char nome[TAM_NOME]){
   node->proximo->antescessor = NULL; // o antescessor do proximo ao iniciaLista recebe nulo
 
   free(node);
+
+  printf("O nome foi deletado com sucesso\n\n");
 }
 
 
@@ -234,13 +262,31 @@ void deletarFinal(Lista lista, char nome[TAM_NOME]){
   node->antescessor->proximo = NULL; // o proximo do antescessor ao fimLista recebe nulo
 
   free(node);
+
+  printf("O nome foi deletado com sucesso\n\n");
 }
 
+/* Funcao unicoElementoDaLista (Unico Elemento da Lista)
+ * 
+ * Retorna int simulando um boolean (0 - false e 1 - true)
+ *
+ * Recebe um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao verificar se a lista possui um unico elemento
+**/
 int unicoElementoDaLista(Lista lista){
   if ( lista->iniLista->proximo == NULL ) return 1;
   else return 0;
 }
 
+/* Funcao deletaUnicoElemento (Deleta Unico Elemento da Lista)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao remover o unico nome da lista
+**/
 void deletaUnicoElemento(Lista lista){
   ponteiroNode nodeADeletar;
   nodeADeletar = lista->iniLista;
@@ -249,6 +295,8 @@ void deletaUnicoElemento(Lista lista){
 
   lista->iniLista = NULL;
   lista->fimLista = NULL; 
+
+  printf("O nome foi deletado com sucesso\n\n");
 }
 
 
@@ -261,6 +309,11 @@ void deletaUnicoElemento(Lista lista){
  * Tem como funcao deletar um nome na lista
 **/
 void deletarNome(Lista lista, char nome[TAM_NOME]){
+  
+  if (verificarSeHaNomeLista(lista,nome) == 0){
+    printf("O nome informado nao existe na lista\n\n");
+    return;
+  }
 
   //caso ultra especial no qual o elemento a ser deletado eh o unico da lista
   if ( unicoElementoDaLista(lista) ) return deletaUnicoElemento(lista);
@@ -281,6 +334,8 @@ void deletarNome(Lista lista, char nome[TAM_NOME]){
   nodeADeletado->proximo->antescessor = aux;
 
   free(nodeADeletado);
+
+  printf("O nome foi deletado com sucesso\n\n");
 }
 
 
@@ -383,8 +438,12 @@ int tratarInstrucaoENome(char str[], Lista lista){
       break;
 
     case 'p':
-      printf("A lista esta:\n");
-      printaLista(lista->iniLista);
+      if(lista->iniLista == NULL){ 
+        printf("A lista de nomes esta vazia");
+      }else{
+        printf("A lista de nomes esta:\n");
+        printaLista(lista->iniLista);
+      }  
       printf("\n\n");
       break;
 

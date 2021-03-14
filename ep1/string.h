@@ -7,7 +7,6 @@
 /*                  Desenvolvido por Rafael Nascimento Lourenco                        */
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#include <stdio.h>
 
 #pragma once
 
@@ -88,7 +87,7 @@ int comparaString(char a[], char b[]){
   * se o valor do indice do a for diferente do valor do indice do b
   * ou se pelo menos uma das strings acabou '\0'
   */
-  printf("%d", i);
+
   /* Caso chegue aqui com ambos das strings no final 
   * significa que as strings sao identicas em tamanho
   * e em seus valores
