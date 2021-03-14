@@ -1,8 +1,17 @@
+////////////////////////////////////////////////////////////////////////////////////////
+/*          Biblioteca construida com base na biblioteca <string.h>                    */
+/*                        Funcoes similares as seguintes                               */
+/*                            strlen, strcmp, strcpy                                   */
+/*                     tamanhoStr, comparaString  e copiaString                        */
+/*                                                                                     */
+/*                  Desenvolvido por Rafael Nascimento Lourenco                        */
+////////////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 
 #pragma once
 
-/* Funcao tamanhoStr (Tamanho da String) 
+/* Funcao tamanhoStr (Tamanho da String) - Similar a strlen()
  * 
  * Retorna um valor inteiro representando o tamanho da string
  *
@@ -19,7 +28,7 @@ int tamanhoStr(char a[]){
   return i;
 }
 
-/* Funcao menorTamanhoStrings (Menor Tamanho entre Strings) 
+/* Funcao menorTamanhoStrings (Menor Tamanho entre Strings) - Auxiliar para strAehMaiorQueStrB
  * 
  * Retorna um valor inteiro representando o menor tamanho 
  * entre as strings
@@ -35,7 +44,7 @@ int menorTamanhoStrings(char a[], char b[]){
   else return tamStrB;
 }
 
-/* Funcao strAehMaiorQueStrB (String a eh maior que a string b) 
+/* Funcao strAehMaiorQueStrB (String a eh maior que a string b) - Auxiliar para comparaString
  * 
  * Retorna um valor inteiro
  * se retornar 1 significa que a ordem eh strA e dps strB
@@ -51,7 +60,6 @@ int menorTamanhoStrings(char a[], char b[]){
  * Tem como funcao retornar a ordem das strings
 **/
 int strAehMaiorQueStrB(char a[], char b[], int indiceIgual){
-  printf("\nOlha ele ai: %d\n", indiceIgual);
   if(a[indiceIgual] == '\0') return 1; //a ordem eh strA, strB 
   if (b[indiceIgual] == '\0') return -1; //a ordem eh strB, strA
   
@@ -59,7 +67,18 @@ int strAehMaiorQueStrB(char a[], char b[], int indiceIgual){
   else return 1;
 }
 
-
+/* Funcao comparaString (Compara Strings) - Similar a strcmp() 
+ * 
+ * Retorna um valor inteiro
+ * se retornar 1 significa que a ordem eh strA e dps strB
+ * se retornar -1 significa que a ordem eh strB e dps srtA
+ * se retornar 0 significa que as strings sao iguais
+ *
+ * Recebe dois ponteiros do tipo char(duas strings) 
+ * para compara-las
+ * 
+ * Tem como funcao retornar a ordem ou equalidade das strings
+**/
 int comparaString(char a[], char b[]){
   
   int i = 0;
@@ -78,7 +97,7 @@ int comparaString(char a[], char b[]){
   else return strAehMaiorQueStrB(a,b, i); //sao diferentes
 }
 
-/* Funcao copiaString (Copia String)
+/* Funcao copiaString (Copia String) - Similar a strcpy()
  * 
  * Retorna void pois trabalha com ponteiros (enderecos de memoria)
  * 

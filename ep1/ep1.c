@@ -1,14 +1,18 @@
+////////////////////////////////////////////////////////////////////////////////////////
+/*                  Exercicio Programa 1 de Estrutura de dados                         */
+/*              Objetivo: Construir uma lista ligada que guarda nomes                  */
+/*                              Principais funcoes:                                    */
+/*              Inserir de forma ordenada, deletar nome e printar lista                */
+/*                                                                                     */
+/*                  Desenvolvido por Rafael Nascimento Lourenco                        */
+////////////////////////////////////////////////////////////////////////////////////////
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include "str.h"
+#include "ctype.h"
+#include "string.h"
 
-/*
- * Variaveis globais para metodos de insercao 
-**/
-
-int possuiPredefinicao = 0;
-char insercaoPreDefinida;
 
 /* 
  ** Constantes
@@ -21,7 +25,7 @@ char insercaoPreDefinida;
 
 /* Tamanho da string de nome exigida no enunciado
 **/
-#define TAM_INFO 64
+#define TAM_NOME 64
 
 /* Tamanho para a string de escolher metodo de insercao
  * ate 9 digitos para o metodo 1 para o espaco e ate outros 3 para escolher
@@ -34,20 +38,25 @@ char insercaoPreDefinida;
  ** Tipos criados
 **/
 
+/* Tipo estruturado de no ou node em ingles
+**/
 typedef struct node{
   struct node * proximo;
   struct node * antescessor;
-  char  info[TAM_INFO];
+  char  nome[TAM_NOME];
 }Node;
 
+// Ponteiro do node
 typedef Node* ponteiroNode;
 
-
+/* Tipo estruturo da cabeca da lista
+**/
 typedef struct cabecaLista {
   struct node * iniLista;
   struct node * fimLista;
 } CabecaLista;
 
+// ponteiro da cabeca da lista
 typedef CabecaLista* Lista;
 
 
@@ -55,6 +64,14 @@ typedef CabecaLista* Lista;
  ** Funcoes de manipulacao da lista
 **/
 
+/* Funcao iniciaLista (Inicia Lista)
+ * 
+ * Retorna um ponteiro de cabecaLista (Lista)
+ *
+ * Recebe um tipo Lista (ponteiro de cabecaLista)
+ *
+ * Tem como funcao setar os valores iniciais de uma lista (Ponteiros nulos)
+**/
 Lista iniciaLista(){
   Lista lista;
   lista = malloc(sizeof (CabecaLista));
@@ -62,16 +79,32 @@ Lista iniciaLista(){
   return lista;
 }
 
-ponteiroNode criaNode(char info[TAM_INFO]){
+/* Funcao criaNode (Criar Node)
+ * 
+ * Retorna um ponteiroNode
+ *
+ * Recebe um ponteiro do tipo char(uma string)
+ *
+ * Tem como funcao criar um no com a info e ponteiros nulos
+**/
+ponteiroNode criaNode(char info[TAM_NOME]){
   ponteiroNode node;
   node = malloc(sizeof (Node));
   //copia string para a info do node
-  copiaString(node->info,info);
+  copiaString(node->nome,info);
   node->proximo = node->antescessor = NULL;
   return node;
 }
 
-void adicionarPrimeiroNode(Lista lista, char info[TAM_INFO]){
+/* Funcao adicionarPrimeiroNode (Adicionar Primeiro Node)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao alocar o primeiro node a uma lista vazia
+**/
+void adicionarPrimeiroNode(Lista lista, char info[TAM_NOME]){
   ponteiroNode node = criaNode(info);
 
   lista->iniLista = node;  
@@ -81,7 +114,15 @@ void adicionarPrimeiroNode(Lista lista, char info[TAM_INFO]){
   node->proximo = NULL;
 }
 
-void adicionarNomeInicio(Lista lista, char info[TAM_INFO]){
+/* Funcao adicionarNomeInicio (Adiciona Nome No Inicio)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao inserir um nome no inicio da lista
+**/
+void adicionarNomeInicio(Lista lista, char info[TAM_NOME]){
   //criando um node novo
   ponteiroNode node = criaNode(info);
 
@@ -101,7 +142,15 @@ void adicionarNomeInicio(Lista lista, char info[TAM_INFO]){
 }
 
 
-void adicionarNomeFinal(Lista lista, char info[TAM_INFO]){
+/* Funcao adicionarNomeFinal (Adiciona Nome No Final)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao inserir um nome no final da lista
+**/
+void adicionarNomeFinal(Lista lista, char info[TAM_NOME]){
   //criando um node novo
   ponteiroNode node = criaNode(info);
 
@@ -120,6 +169,129 @@ void adicionarNomeFinal(Lista lista, char info[TAM_INFO]){
   node->proximo = aux; //o node antescessor recebe o endereco do node criado
 }
 
+
+/* Funcao adicionarNomeEmOrdem (Adiciona Nome Em Ordem)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao inserir um nome de forma ordenada na lista
+**/
+void adicionarNomeEmOrdem(Lista lista, char info[TAM_NOME]){
+  //Verificando casos especiais no qual o valor sera nas pontas, alterando o iniciaListae ou fimLista
+  //obs: quando retorna 1 significa que a ordem esta certa e -1 esta invertida
+  if( comparaString( info , lista->iniLista->nome ) >= 0 ) return adicionarNomeInicio(lista,info);
+  if( comparaString( lista->fimLista->nome , info) >= 0 ) return adicionarNomeFinal(lista,info);
+
+  ponteiroNode aux;
+  for ( aux = lista->iniLista; (comparaString( info , aux->proximo->nome ) < 0) ; aux = aux->proximo );
+  //quando parar significa que o valor da info eh maior que o anterior e menor que o proximo
+
+  ponteiroNode node;
+  node = criaNode(info);
+
+  node->antescessor = aux;
+  node->proximo = aux->proximo;
+
+  node->antescessor->proximo = node;
+  node->proximo->antescessor = node;
+}
+
+
+/* Funcao deletaInicio (Deletar Inicio)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao deletar um nome no inicio da lista
+**/
+void deletarInicio(Lista lista, char nome[TAM_NOME]){
+  ponteiroNode node;
+  node = lista->iniLista;
+
+  lista->iniLista = node->proximo; // o iniciaLista rebebe o iniciaLista->proximo
+  node->proximo->antescessor = NULL; // o antescessor do proximo ao iniciaLista recebe nulo
+
+  free(node);
+}
+
+
+/* Funcao deletarFinal (Deletar Final)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao deletar um nome no fim da lista
+**/
+void deletarFinal(Lista lista, char nome[TAM_NOME]){
+  ponteiroNode node;
+  node = lista->fimLista;
+
+  lista->fimLista = node->antescessor; // o fimLista rebebe o fimLista->antescessor
+  node->antescessor->proximo = NULL; // o proximo do antescessor ao fimLista recebe nulo
+
+  free(node);
+}
+
+int unicoElementoDaLista(Lista lista){
+  if ( lista->iniLista->proximo == NULL ) return 1;
+  else return 0;
+}
+
+void deletaUnicoElemento(Lista lista){
+  ponteiroNode nodeADeletar;
+  nodeADeletar = lista->iniLista;
+
+  free(nodeADeletar);
+
+  lista->iniLista = NULL;
+  lista->fimLista = NULL; 
+}
+
+
+/* Funcao deletarNome (Deletar Nome)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao deletar um nome na lista
+**/
+void deletarNome(Lista lista, char nome[TAM_NOME]){
+
+  //caso ultra especial no qual o elemento a ser deletado eh o unico da lista
+  if ( unicoElementoDaLista(lista) ) return deletaUnicoElemento(lista);
+
+  //Verificando casos especiais no qual o valor sera nas pontas, alterando o iniciaListae ou fimLista
+  //obs: quando retorna 0 significa que as strings sao iguais
+  if( comparaString( lista->iniLista->nome , nome ) == 0 ) return deletarInicio(lista,nome);
+  if( comparaString( lista->fimLista->nome , nome ) == 0 ) return deletarFinal(lista,nome);
+
+  ponteiroNode aux;
+  for ( aux = lista->iniLista; comparaString( aux->proximo->nome , nome ) != 0 ; aux = aux->proximo );
+  //quando se termina essa estrutura significa que o proximo node tem que ser deletado
+
+  ponteiroNode nodeADeletado; //node que sera deletado
+  nodeADeletado = aux->proximo;
+
+  aux->proximo = nodeADeletado->proximo;
+  nodeADeletado->proximo->antescessor = aux;
+
+  free(nodeADeletado);
+}
+
+
+/* Funcao primeiroNode (Primeiro Node)
+ * 
+ * Retorna int simulando um boolean (0 - false e 1 - true)
+ *
+ * Recebe um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao verificar a existencia de 2 ou mais nodes na lista 
+**/
 int primeiroNode(Lista lista){
   if(lista->iniLista == NULL) return 1;
   else return 0;
@@ -129,12 +301,30 @@ int primeiroNode(Lista lista){
  ** Funcoes para liberar a lista
 **/
 
+
+/* Funcao liberaNos (Libera Nos)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiroNode 
+ *
+ * Tem como funcao dar free em todos os nodes da lista de forma recursiva
+**/
 void liberaNos (ponteiroNode nodeAtual) {
   if (nodeAtual == NULL) return;
   liberaNos(nodeAtual->proximo);
   free(nodeAtual); 
 }
 
+
+/* Funcao liberaLista (Libera Lista)
+ * 
+ * Retorna void pois trata diretamente nos enderecos de memoria
+ *
+ * Recebe um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao dar free na lista
+**/
 void liberaLista(Lista lista){
   if(lista->iniLista != NULL) liberaNos(lista->iniLista);
   free(lista);
@@ -145,82 +335,32 @@ void liberaLista(Lista lista){
 **/
 
 
+/* Funcao printaLista (Printa Lista)
+ * 
+ * Retorna void pois apenas serve para printar algo na tela
+ *
+ * Recebe ponteiroNode
+ *
+ * Tem como funcao printar a lista
+**/
 void printaLista(ponteiroNode nodeAtual){  
   if(nodeAtual == NULL) return;
-  printf("%s", nodeAtual->info);
+  printf("%s", nodeAtual->nome);
   printaLista(nodeAtual->proximo);
 }
 
-void printarMenuInsercao(){
-  printf("-----------------------------------------------------------------------------------\n");
-  printf("Escolha uma opcao de insercao\n\n");
-  
-  printf("Para inserir no inicio:\n");
-  printf(">inicio\n\n");
-  
-  printf("Para inserir no final:\n");
-  printf(">final\n\n");
-  
-  printf("Para inserir de forma ordenada:\n");
-  printf(">ordenada\n\n");
 
-  printf("Voce tambem pode deixar pre-selecionado ate o final da execucao do programa:\n");
-  printf(">inicio sim\n\n");
-
-  printf("Voce pode usar as formas simplificadas tambem como nos exemplos abaixo:");
-  printf("\n>i s");
-  printf("\n>i\n");
-  printf("-----------------------------------------------------------------------------------\n\n");
-}
-
-void controleDeInsercoes(char tipoInsercao, Lista lista, char info[TAM_INFO]){
-  if(primeiroNode(lista)) return adicionarPrimeiroNode(lista,info);
-
-  switch(tipoInsercao){
-    case'i':
-      adicionarNomeInicio(lista,info);
-      break;
-
-    case'f':
-      adicionarNomeFinal(lista,info);
-      break;
-
-    case'o':
-
-      break;
-  }
-}
-
-void selecionarMetodoInsercao(Lista lista, char info[TAM_INFO]){
-  if(possuiPredefinicao){
-    controleDeInsercoes(insercaoPreDefinida, lista, info);
-  }else{
-    printarMenuInsercao();
-    
-    char tipoInsercao[TAM_METODO_INSERCAO-1]; //desconsiderando o espaco para o fim da string '\0'
-    fgets(tipoInsercao,TAM_METODO_INSERCAO,stdin);
-    
-    int i;
-    for(i=0; !isspace(tipoInsercao[i]) ;i++);
-    //quando sai dessa estrutura de repeticao significa que achamos o primeiro espaco
-    
-    //cria um ponteiro de char para receber a substring apos o primeiro espaco
-    char* predefinicao;
-    predefinicao = &tipoInsercao[i+1]; //recebe substring com o dado sobre a predefinicao 
-    
-    if(predefinicao[0] == 's'){
-      possuiPredefinicao = 1;
-      insercaoPreDefinida = tipoInsercao[0];
-    }
-    
-    controleDeInsercoes(tipoInsercao[0], lista, info);
-  }
-  printf("\n");
-}
-
+/* Funcao tratarInstrucaoENome (Tratar Funcao E Nome)
+ * 
+ * Retorna int pois simula um boolean (0 - false e 1 - true)
+ *
+ * Recebe um ponteiro do tipo char(uma string) e um ponteiro de cabecaLista (Lista)
+ *
+ * Tem como funcao tratar a string fornecida pelo usuario e encaminha-las para determinadas funcoes
+**/
 int tratarInstrucaoENome(char str[], Lista lista){
   int i;  
-  for(i=0; !isspace(str[i]) ;i++);
+  for(i=0; !temValorVazio(str[i]) ;i++);
   //quando sai dessa estrutura de repeticao significa que achamos o primeiro espaco
 
   //cria um ponteiro de char para receber a substring apos o primeiro espaco
@@ -234,10 +374,12 @@ int tratarInstrucaoENome(char str[], Lista lista){
   */
   switch(str[0]){
     case 'i':
-      selecionarMetodoInsercao(lista,nome);
+      if(primeiroNode(lista)) adicionarPrimeiroNode(lista,nome);
+      else adicionarNomeEmOrdem(lista,nome);
       break;
 
     case 'd':
+      deletarNome(lista,nome);
       break;
 
     case 'p':
@@ -258,6 +400,15 @@ int tratarInstrucaoENome(char str[], Lista lista){
   return 1; //qualquer opcao sem ser o q(uit) para sair
 }
 
+
+/* Funcao printarMenuOpcoes (Printa Menu De Opcoes)
+ * 
+ * Retorna void pois apenas serve para printar algo na tela
+ *
+ * Nao recebe argumento
+ *
+ * Tem como funcao printar o menu de opcoes
+**/
 void printarMenuOpcoes(){
   printf("-----------------------------------------------------------------------------------\n");
   printf("Qual instrucao voce deseja realizar?\n\n");
@@ -276,9 +427,11 @@ void printarMenuOpcoes(){
   printf("-----------------------------------------------------------------------------------\n\n");
 }
 
-
-/* Funcao main (principal)
+/*
+ ** Funcao main (principal)
 **/
+
+
 int main (void){
   char instrucaoENome[TAM_INSTRUCAO_E_NOME];
   int condicaoWhile;
